@@ -1,28 +1,27 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: backend
+  name: nginx
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: backend
+      app: nginx
   template:
     metadata:
       labels:
-        app: backend
+        app: nginx
     spec:
       containers:
-        - name: backend
-          image: backend-app:v1
+        - name: nginx
+          image: nginx:latest
           ports:
-            - containerPort: 3000
-          env:
-            - name: DB_HOST
-              value: db
-            - name: DB_USER
-              value: user
-            - name: DB_PASSWORD
-              value: password
-            - name: DB_NAME
-              value: mydb
+            - containerPort: 80
+          volumeMounts:
+            - name: nginx-config-volume
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+      volumes:
+        - name: nginx-config-volume
+          configMap:
+            name: nginx-config
